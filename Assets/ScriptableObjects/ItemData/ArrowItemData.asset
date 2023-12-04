@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ItemSprite: {fileID: 21300000, guid: c0e3864c2afb09949aabc5d838d8eccb, type: 3}
   ItemSound: {fileID: 0}
+  ItemType: 1

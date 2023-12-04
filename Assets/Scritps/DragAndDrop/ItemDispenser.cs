@@ -6,12 +6,11 @@ using UnityEngine.EventSystems;
 
 public class ItemDispenser : MonoBehaviour, IDropHandler, INotifiableSlot
 {
-    #region Paremereter
+    // Parameters 
 
     [SerializeField]
     private GameObject ItemToDispense;
 
-    #endregion
 
     // Start is called before the first frame update
     void Start()
@@ -21,13 +20,18 @@ public class ItemDispenser : MonoBehaviour, IDropHandler, INotifiableSlot
 
     public void OnDrop(PointerEventData eventData)
     {
-        GameObject droppedItem = eventData.pointerDrag;
-        Destroy(droppedItem);
+        Destroy(eventData.pointerDrag);
     }
 
-    void INotifiableSlot.OnItemDragedOut(GameObject item)
+    public void OnItemDraggedOut(GameObject item)
     {
         InstantiateItem();
+    }
+    
+    public void OnItemDraggedIn(GameObject item)
+    {
+        if (item.transform.parent == transform)
+            Destroy(item);
     }
 
     private void InstantiateItem()
@@ -35,13 +39,7 @@ public class ItemDispenser : MonoBehaviour, IDropHandler, INotifiableSlot
 
         if (ItemToDispense != null)
         {
-            Instantiate(ItemToDispense,transform);
+            Instantiate(ItemToDispense, transform);
         }
-    }
-
-    public void OnItemDraggedIn(GameObject item)
-    {
-        if (item.transform.parent == transform)
-            Destroy(item);
     }
 }

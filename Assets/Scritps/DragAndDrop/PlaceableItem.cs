@@ -10,6 +10,8 @@ public class PlaceableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
     // Transform that the item will snap to after being released from drag
     [HideInInspector] public Transform ParentAfterDrag;
 
+    [HideInInspector] public Vector2Int Position = new(-1, -1);
+
     #endregion
 
     #region Parameters
@@ -43,25 +45,28 @@ public class PlaceableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         transform.SetParent(transform.root);
         transform.SetAsLastSibling();
 
-        ParentAfterDrag.GetComponent<INotifiableSlot>()?.OnItemDragedOut(gameObject);
+        ParentAfterDrag.GetComponent<INotifiableSlot>()?.OnItemDraggedOut(gameObject);
 
         _canvasGroup.blocksRaycasts = false;
+
+        transform.DOKill();
+        transform.DOScale(new Vector3(draggedScale, draggedScale, draggedScale), dragOutDuration).SetEase(dragOutTransition);
+
     }
 
     // Drag Out
     public void OnDrag(PointerEventData eventData)
     {
         transform.position = eventData.position;
-
-        transform.DOKill();
-        transform.DOScale(new Vector3(draggedScale, draggedScale, draggedScale), dragOutDuration).SetEase(dragOutTransition);
     }
 
 
     // Drag In
     public void OnEndDrag(PointerEventData eventData)
     {
+        // Parent after drag is called before by the drop handler thingy
         transform.SetParent(ParentAfterDrag);
+
         _canvasGroup.blocksRaycasts = true;
 
         ParentAfterDrag.GetComponent<INotifiableSlot>()?.OnItemDraggedIn(gameObject);
@@ -71,6 +76,7 @@ public class PlaceableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
         transform.DOScale(new Vector3(1, 1, 1), dragInDuration).SetEase(dragInTransition);
     }
+
     private void OnDestroy()
     {
         transform.DOKill(gameObject);

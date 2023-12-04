@@ -9,8 +9,6 @@ public class AudioItem : MonoBehaviour
 
     [SerializeField] private AudioItemData data;
 
-
-
     #endregion
 
 
@@ -18,12 +16,6 @@ public class AudioItem : MonoBehaviour
     void Start()
     {
         UpdateItemSprite();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 
     private void OnValidate()
@@ -38,4 +30,6 @@ public class AudioItem : MonoBehaviour
         if (image != null && data != null && data.ItemSprite != null)
             image.overrideSprite = data?.ItemSprite;
     }
+
+    public AudioItemData GetData() => data;
 }

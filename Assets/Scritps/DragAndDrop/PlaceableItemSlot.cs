@@ -20,7 +20,7 @@ public class PlaceableItemSlot : MonoBehaviour, IDropHandler, INotifiableSlot
         if (placeableItem == null)
             return;
 
-        placeableItem.ParentAfterDrag = transform;
+        placeableItem.NextParent = transform;
 
         AudioItem audioItem = dropped.GetComponent<AudioItem>();
         if (audioItem == null)
@@ -38,7 +38,7 @@ public class PlaceableItemSlot : MonoBehaviour, IDropHandler, INotifiableSlot
             return;
 
 
-        AudioManager manager = AudioManager.Instance;
+        StateManager manager = StateManager.Instance;
         if (manager == null)
         {
             Debug.LogWarning("Audio manager missing in scene");

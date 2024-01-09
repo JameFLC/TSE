@@ -1,10 +1,7 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
 
-public class AudioManager : MonoBehaviour
+public class StateManager : MonoBehaviour
 {
     public struct Item
     {
@@ -24,11 +21,12 @@ public class AudioManager : MonoBehaviour
     }
 
     // Public Members
-    [HideInInspector] public static AudioManager Instance { get; private set; } = null;
+    [HideInInspector] public static StateManager Instance { get; private set; } = null;
 
     // Private Members
     private List<Item> items = new();
-
+    private Item lastItem = new();
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -44,32 +42,41 @@ public class AudioManager : MonoBehaviour
         if (i == -1)
         {
             if (type != ItemType.None)
-            items.Add(new Item(type, position));
+            {
+                items.Add(new Item(type, position));
+                lastItem.type = ItemType.None;
+            }
         }
         else
         {
             if (type != ItemType.None)
                 items[i] = new Item(type, position);
             else
+            {
+                // Case drag out
+                lastItem = items[i];
                 items.RemoveAt(i);
+            }
         }
 
-        string baba = "List :";
+        string listLog = "List :";
 
         foreach (var x in items)
         {
-            baba += " " + (x.ToString()) + ",";
+            listLog += " " + (x.ToString()) + ",";
         }
 
-        Debug.Log(baba);
+        Debug.Log(listLog);
     }
 
-    IEnumerator baba()
+    public void AddLastItem()
     {
-        while (true)
+        if( lastItem.type != ItemType.None)
         {
-            yield return new WaitForSeconds(1);
-
+            UpdateAudioGrid(lastItem.type, lastItem.position);
+            lastItem.type = ItemType.None;
         }
     }
+
+    public List<Item> GetItems() => items;
 }

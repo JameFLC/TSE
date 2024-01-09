@@ -8,9 +8,7 @@ public class PlaceableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
     #region Public Variables
 
     // Transform that the item will snap to after being released from drag
-    [HideInInspector] public Transform ParentAfterDrag;
-
-    [HideInInspector] public Vector2Int Position = new(-1, -1);
+    [HideInInspector] public Transform NextParent;
 
     #endregion
 
@@ -28,9 +26,11 @@ public class PlaceableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
     #endregion
 
     #region Private Variables
-
+    
     // Used to control the item iteractibility
     private CanvasGroup _canvasGroup;
+
+    private Transform lastParent;
 
     #endregion
 
@@ -41,17 +41,17 @@ public class PlaceableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
     
     public void OnBeginDrag(PointerEventData eventData)
     {
-        ParentAfterDrag = transform.parent;
+        lastParent = transform.parent;
+        NextParent = transform.parent;
         transform.SetParent(transform.root);
         transform.SetAsLastSibling();
 
-        ParentAfterDrag.GetComponent<INotifiableSlot>()?.OnItemDraggedOut(gameObject);
+        NextParent.GetComponent<INotifiableSlot>()?.OnItemDraggedOut(gameObject);
 
         _canvasGroup.blocksRaycasts = false;
 
         transform.DOKill();
         transform.DOScale(new Vector3(draggedScale, draggedScale, draggedScale), dragOutDuration).SetEase(dragOutTransition);
-
     }
 
     // Drag Out
@@ -64,12 +64,18 @@ public class PlaceableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
     // Drag In
     public void OnEndDrag(PointerEventData eventData)
     {
+
+        if (lastParent == NextParent)
+        {
+            StateManager.Instance.AddLastItem();
+        }
+
         // Parent after drag is called before by the drop handler thingy
-        transform.SetParent(ParentAfterDrag);
+        transform.SetParent(NextParent);
 
         _canvasGroup.blocksRaycasts = true;
 
-        ParentAfterDrag.GetComponent<INotifiableSlot>()?.OnItemDraggedIn(gameObject);
+        NextParent.GetComponent<INotifiableSlot>()?.OnItemDraggedIn(gameObject);
 
         transform.DOKill();
         transform.DOLocalMove(new(0, 0, 0), dragInDuration).SetEase(dragInTransition);

@@ -6,7 +6,7 @@ using UnityEngine.UI;
 [RequireComponent(typeof(GridLayoutGroup))]
 public class SlotCoordinateManager : MonoBehaviour
 {
-    [SerializeField] private int NumberOfCollumns = 8;
+    public int NumberOfCollumns = 8;
 
     // Start is called before the first frame update
     void Start()

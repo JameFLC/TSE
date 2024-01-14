@@ -31,7 +31,6 @@ public class Piano : MonoBehaviour
 
     void playSound()
     {
-        
         if (Input.GetKey("a")) index = 0; 
         if (Input.GetKey("w")) index = 1; 
         if (Input.GetKey("s")) index = 2; 

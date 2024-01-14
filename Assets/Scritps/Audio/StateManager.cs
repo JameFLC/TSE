@@ -1,8 +1,13 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class StateManager : MonoBehaviour
 {
+    [SerializeField] private UnityEvent<Item> OnItemChanged;
+    
+    [Serializable]
     public struct Item
     {
         public Item(ItemType type, Vector2Int position)
@@ -66,7 +71,8 @@ public class StateManager : MonoBehaviour
             listLog += " " + (x.ToString()) + ",";
         }
 
-        Debug.Log(listLog);
+        // Debug.Log(listLog);
+        OnItemChanged.Invoke(new(type, position));
     }
 
     public void AddLastItem()
